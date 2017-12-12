@@ -8,11 +8,14 @@ generate(_Forms) ->
     NewForms = new__(),
     GettersForms = [
         getter__(RecordField) || RecordField
-        <- (get(state))#state.required_record_fields ++ (get(state))#state.optional_record_fields
+        <- (get(state))#state.required_record_fields
+        ++ (get(state))#state.optional_record_fields
+        ++ (get(state))#state.protected_record_fields
     ],
     SettersForms = [
         setter__(RecordField) || RecordField
-        <- (get(state))#state.required_record_fields ++ (get(state))#state.optional_record_fields
+        <- (get(state))#state.required_record_fields
+        ++ (get(state))#state.optional_record_fields
     ],
     MaybeDefaultValidateCallback = [default_validate_callback__((get(state))#state.callback_validate_exists)],
     MaybeDefaultUpdatedCallback = [default_updated_callback__((get(state))#state.callback_updated_exists)],

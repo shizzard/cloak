@@ -4,5 +4,6 @@
 -record(?MODULE, {
     a :: integer(),
     b = atom :: atom(),
-    '_c' = 0 :: integer()
+    prot_c = 0 :: integer(),
+    priv_d = 0 :: integer()
 }).

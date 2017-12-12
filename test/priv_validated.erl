@@ -4,7 +4,8 @@
 -record(?MODULE, {
     a,
     b = atom,
-    '_c'
+    prot_c = 0,
+    priv_d = 0
 }).
 
 cloak_validate(a, Value) when Value > 100 ->

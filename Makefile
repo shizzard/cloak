@@ -11,12 +11,12 @@ compile:
 	$(REBAR) compile
 
 compile-debug:
-	ERL_COMPILER_OPTIONS='{d, cloak_dump, "temp"}' \
+	ERL_COMPILER_OPTIONS='[{d, cloak_dump, "temp"}]' \
 	$(REBAR) compile
 
 dialyze:
 	$(REBAR) dialyzer
 
 test:
-	ERL_COMPILER_OPTIONS='{d, cloak_dump, "temp"}' \
+	ERL_COMPILER_OPTIONS='[{d, cloak_dump, "temp"}]' \
 	$(REBAR) eunit

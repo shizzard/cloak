@@ -9,12 +9,12 @@ can_get_constructor_defined_test() ->
 can_get_all_accessors_defined_test() ->
     ?assertEqual(true, lists:all(fun(Export) ->
         lists:member(Export, priv_basic:module_info(exports))
-    end, [{a, 1}, {a, 2}, {b, 1}, {b, 2}])).
+    end, [{a, 1}, {a, 2}, {b, 1}, {b, 2}, {prot_c, 1}])).
 
 cannot_get_private_accessors_defined_test() ->
     ?assertEqual(true, lists:all(fun(Export) ->
         not lists:member(Export, priv_basic:module_info(exports))
-    end, [{'_c', 1}, {'_c', 2}])).
+    end, [{priv_d, 1}, {priv_d, 2}, {prot_c, 2}])).
 
 can_get_struct_test() ->
     Basic = priv_basic:new(#{a => atom}),

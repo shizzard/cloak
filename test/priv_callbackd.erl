@@ -4,14 +4,15 @@
 -record(?MODULE, {
     a,
     b = atom,
-    '_c' = 0
+    prot_op_count = 0,
+    priv_c = 0
 }).
 
 cloak_updated(a, Record) ->
-    Record#?MODULE{'_c' = Record#?MODULE.'_c' + 1};
+    Record#?MODULE{prot_op_count = Record#?MODULE.prot_op_count + 1};
 
 cloak_updated(b, Record) ->
-    Record#?MODULE{'_c' = Record#?MODULE.'_c' - 1};
+    Record#?MODULE{prot_op_count = Record#?MODULE.prot_op_count + 1};
 
 cloak_updated(_, Record) ->
     Record.

@@ -3,6 +3,19 @@
 -include("cloak.hrl").
 
 
+-ifdef(cloak_priv_prefix).
+    priv_prefix() -> ?cloak_priv_prefix.
+-else.
+    priv_prefix() -> "priv_".
+-endif.
+
+-ifdef(cloak_prot_prefix).
+    prot_prefix() -> ?cloak_prot_prefix.
+-else.
+    prot_prefix() -> "prot_".
+-endif.
+
+
 
 collect(Forms0) ->
     [?es:revert(traverse(fun callback/2, Form)) || Form <- Forms0].
@@ -68,16 +81,6 @@ collect_record_field(typed_record_field, Form) ->
 
 
 
-collect_record_field([$_ | _] = FieldStringName, FieldName, _FieldValue) ->
-    State = get(state),
-    put(state, State#state{
-        %% record field name starts with '_', so it is hidden
-        hidden_record_fields = [#record_field{
-            name = FieldName,
-            binary_name = list_to_binary(FieldStringName)
-        } | State#state.hidden_record_fields]
-    });
-
 collect_record_field(FieldStringName, FieldName, none = _FieldValue) ->
     State = get(state),
     put(state, (get(state))#state{
@@ -90,13 +93,35 @@ collect_record_field(FieldStringName, FieldName, none = _FieldValue) ->
 
 collect_record_field(FieldStringName, FieldName, _FieldValue) ->
     State = get(state),
-    put(state, (get(state))#state{
-        %% record field has initial value, so it is optional
-        optional_record_fields = [#record_field{
-            name = FieldName,
-            binary_name = list_to_binary(FieldStringName)
-        } | State#state.optional_record_fields]
-    }).
+    case {
+        lists:prefix(priv_prefix(), FieldStringName),
+        lists:prefix(prot_prefix(), FieldStringName)
+    } of
+        {true, _} ->
+            put(state, (get(state))#state{
+                %% private field prefix
+                private_record_fields = [#record_field{
+                    name = FieldName,
+                    binary_name = list_to_binary(FieldStringName)
+                } | State#state.private_record_fields]
+            });
+        {_, true} ->
+            put(state, (get(state))#state{
+                %% protected field prefix
+                protected_record_fields = [#record_field{
+                    name = FieldName,
+                    binary_name = list_to_binary(FieldStringName)
+                } | State#state.protected_record_fields]
+            });
+        {_, _} ->
+            put(state, (get(state))#state{
+                %% no field prefix
+                optional_record_fields = [#record_field{
+                    name = FieldName,
+                    binary_name = list_to_binary(FieldStringName)
+                } | State#state.optional_record_fields]
+            })
+    end.
 
 
 

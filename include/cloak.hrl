@@ -11,7 +11,8 @@
     module :: atom(),
     required_record_fields = [] :: [#record_field{}],
     optional_record_fields = [] :: [#record_field{}],
-    hidden_record_fields = [] :: [#record_field{}],
+    protected_record_fields = [] :: [#record_field{}],
+    private_record_fields = [] :: [#record_field{}],
     callback_validate_exists = false :: boolean(),
     callback_updated_exists = false :: boolean(),
     export = [] :: list()
