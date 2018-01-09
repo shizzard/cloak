@@ -17,6 +17,7 @@ generate(_Forms) ->
         <- (get(state))#state.required_record_fields
         ++ (get(state))#state.optional_record_fields
     ],
+    MaybeDefaultValidateStructCallback = [default_validate_struct_callback__((get(state))#state.callback_validate_struct_exists)],
     MaybeDefaultValidateCallback = [default_validate_callback__((get(state))#state.callback_validate_exists)],
     MaybeDefaultUpdatedCallback = [default_updated_callback__((get(state))#state.callback_updated_exists)],
     ExportAttribute = exports__(),
@@ -26,6 +27,7 @@ generate(_Forms) ->
         NewForms,
         GettersForms,
         SettersForms,
+        MaybeDefaultValidateStructCallback,
         MaybeDefaultValidateCallback,
         MaybeDefaultUpdatedCallback,
         eof__()
@@ -68,25 +70,64 @@ new_clause_patterns_match__() ->
 
 
 new_clause_body_match__() ->
-    [?es:application(?es:atom(optional_new), [
-        var__(map, 0),
-        ?es:application(?es:atom(required_new), [
+    [?es:case_expr(new_clause_body_match_case_argument__(), new_clause_body_match_case_clauses__())].
+
+
+new_clause_body_match_case_argument__() ->
+    ?es:application(?es:atom(?cloak_callback_validate_struct), [
+        ?es:application(?es:atom(optional_new), [
             var__(map, 0),
-            ?es:record_expr(?es:atom((get(state))#state.module), []),
+            ?es:application(?es:atom(required_new), [
+                var__(map, 0),
+                ?es:record_expr(?es:atom((get(state))#state.module), []),
+                ?es:list([
+                    ?es:tuple([
+                        ?es:atom(RequiredField#record_field.name),
+                        ?es:abstract(RequiredField#record_field.binary_name)
+                    ]) || RequiredField <- (get(state))#state.required_record_fields
+                ])
+            ]),
             ?es:list([
                 ?es:tuple([
-                    ?es:atom(RequiredField#record_field.name),
-                    ?es:abstract(RequiredField#record_field.binary_name)
-                ]) || RequiredField <- (get(state))#state.required_record_fields
+                    ?es:atom(OptionalField#record_field.name),
+                    ?es:abstract(OptionalField#record_field.binary_name)
+                ]) || OptionalField <- (get(state))#state.optional_record_fields
             ])
-        ]),
-        ?es:list([
-            ?es:tuple([
-                ?es:atom(OptionalField#record_field.name),
-                ?es:abstract(OptionalField#record_field.binary_name)
-            ]) || OptionalField <- (get(state))#state.optional_record_fields
         ])
-    ])].
+    ]).
+
+new_clause_body_match_case_clauses__() ->
+    [
+        ?es:clause(
+            new_clause_body_match_case_clauses_patterns_match_ok__(),
+            _Guards = none,
+            new_clause_body_match_case_clauses_body_match_ok__()
+        ),
+        ?es:clause(
+            new_clause_body_match_case_clauses_patterns_error__(),
+            _Guards = none,
+            new_clause_body_match_case_clauses_body_error__()
+        )
+    ].
+
+
+new_clause_body_match_case_clauses_patterns_match_ok__() ->
+    [?es:tuple([?es:atom(ok), var__(value, 1)])].
+
+
+new_clause_body_match_case_clauses_body_match_ok__() ->
+    [var__(value, 1)].
+
+
+new_clause_body_match_case_clauses_patterns_error__() ->
+    [?es:tuple([?es:atom(error), var__(reason, 0)])].
+
+
+new_clause_body_match_case_clauses_body_error__() ->
+    [
+        error_message__("cloak badarg: struct validation failed with reason: ~p", [var__(reason, 0)]),
+        error_badarg__()
+    ].
 
 
 new_clause_patterns_mismatch__() ->
@@ -452,6 +493,29 @@ setter_clause_body_match_case_clauses_body_mismatch__(Name) ->
 
 
 %% Default callbacks
+
+
+default_validate_struct_callback__(true) ->
+    [];
+
+default_validate_struct_callback__(false) ->
+    ?es:function(?es:atom(?cloak_callback_validate_struct), default_validate_struct_callback_clauses__()).
+
+
+default_validate_struct_callback_clauses__() ->
+    [?es:clause(
+        default_validate_struct_callback_clause_patterns_match__(),
+        _Guards = none,
+        default_validate_struct_callback_clause_body_match__()
+    )].
+
+
+default_validate_struct_callback_clause_patterns_match__() ->
+    [var__(value, 0)].
+
+
+default_validate_struct_callback_clause_body_match__() ->
+    [?es:tuple([?es:atom(ok), var__(value, 0)])].
 
 
 default_validate_callback__(true) ->
