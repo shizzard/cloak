@@ -55,6 +55,7 @@ callback(attribute, Form) ->
 
 callback(function, Form) ->
     put(state, (get(state))#state{
+        callback_validate_struct_exists = is_callback_validate_struct(Form, (get(state))#state.callback_validate_struct_exists),
         callback_validate_exists = is_callback_validate(Form, (get(state))#state.callback_validate_exists),
         callback_updated_exists = is_callback_updated(Form, (get(state))#state.callback_updated_exists)
     }),
@@ -121,6 +122,16 @@ collect_record_field(FieldStringName, FieldName, _FieldValue) ->
                     binary_name = list_to_binary(FieldStringName)
                 } | State#state.optional_record_fields]
             })
+    end.
+
+
+
+is_callback_validate_struct(Form, Default) ->
+    case {?es:atom_value(?es:function_name(Form)), ?es:function_arity(Form)} of
+        {?cloak_callback_validate_struct, 1} ->
+            true;
+        {_, _} ->
+            Default
     end.
 
 
