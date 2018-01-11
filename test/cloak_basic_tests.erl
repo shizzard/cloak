@@ -34,3 +34,9 @@ can_set_value_test() ->
     Basic2 = priv_basic:b(Basic1, 321),
     ?assertEqual(another, priv_basic:a(Basic2)),
     ?assertEqual(321, priv_basic:b(Basic2)).
+
+can_update_multiple_fields() ->
+    Basic = priv_basic:new(#{a => atom, b => 123}),
+    Basic1 = priv_basic:update(Basic, #{a => another, b => 321}),
+    ?assertEqual(another, priv_basic:a(Basic1)),
+    ?assertEqual(321, priv_basic:b(Basic1)).
