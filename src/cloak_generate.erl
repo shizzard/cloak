@@ -21,9 +21,11 @@ generate(_Forms) ->
     MaybeDefaultValidateCallback = [default_validate_callback__((get(state))#state.callback_validate_exists)],
     MaybeDefaultUpdatedCallback = [default_updated_callback__((get(state))#state.callback_updated_exists)],
     ExportAttribute = exports__(),
+    TypeAttributes = [struct_type__(), struct_type_export__()],
     [
         MaybeErrorForms,
         ExportAttribute,
+        TypeAttributes,
         NewForms,
         GettersForms,
         SettersForms,
@@ -574,6 +576,25 @@ exports__() ->
                 ?es:arity_qualifier(?es:atom(Function), ?es:integer(Arity))
             end, (get(state))#state.export))
         ]
+    )].
+
+
+%% Type attributes
+
+
+%% This code is quite hacky and dirty. Should rewrite it when proper solution is found.
+
+struct_type__() ->
+    [merl:quote(
+        0,
+        lists:flatten(io_lib:format("-type ~p() :: #~p{}.", [?cloak_struct_type, (get(state))#state.module]))
+    )].
+
+
+struct_type_export__() ->
+    [merl:quote(
+        0,
+        lists:flatten(io_lib:format("-export_type([~p/0]).", [?cloak_struct_type]))
     )].
 
 

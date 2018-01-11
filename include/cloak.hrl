@@ -3,6 +3,7 @@
 -define(cloak_callback_validate_struct, cloak_validate_struct).
 -define(cloak_callback_validate, cloak_validate).
 -define(cloak_callback_updated, cloak_updated).
+-define(cloak_struct_type, t).
 
 -record(record_field, {
     name :: atom(),
