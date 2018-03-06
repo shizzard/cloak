@@ -82,45 +82,43 @@ collect_record_field(typed_record_field, Form) ->
 
 
 
-collect_record_field(FieldStringName, FieldName, none = _FieldValue) ->
-    State = get(state),
-    put(state, (get(state))#state{
-        %% record field has no initial value, so it is required
-        required_record_fields = [#record_field{
-            name = FieldName,
-            binary_name = list_to_binary(FieldStringName)
-        } | State#state.required_record_fields]
-    });
-
-collect_record_field(FieldStringName, FieldName, _FieldValue) ->
-    State = get(state),
+collect_record_field(FieldStringName, FieldName, FieldValue) ->
     case {
+        FieldValue,
         lists:prefix(priv_prefix(), FieldStringName),
         lists:prefix(prot_prefix(), FieldStringName)
     } of
-        {true, _} ->
+        {_, true, _} ->
             put(state, (get(state))#state{
                 %% private field prefix
                 private_record_fields = [#record_field{
                     name = FieldName,
                     binary_name = list_to_binary(FieldStringName)
-                } | State#state.private_record_fields]
+                } | (get(state))#state.private_record_fields]
             });
-        {_, true} ->
+        {_, _, true} ->
             put(state, (get(state))#state{
                 %% protected field prefix
                 protected_record_fields = [#record_field{
                     name = FieldName,
                     binary_name = list_to_binary(FieldStringName)
-                } | State#state.protected_record_fields]
+                } | (get(state))#state.protected_record_fields]
             });
-        {_, _} ->
+        {none, _, _} ->
+            put(state, (get(state))#state{
+                %% record field has no initial value, so it is required
+                required_record_fields = [#record_field{
+                    name = FieldName,
+                    binary_name = list_to_binary(FieldStringName)
+                } | (get(state))#state.required_record_fields]
+            });
+        {_, _, _} ->
             put(state, (get(state))#state{
                 %% no field prefix
                 optional_record_fields = [#record_field{
                     name = FieldName,
                     binary_name = list_to_binary(FieldStringName)
-                } | State#state.optional_record_fields]
+                } | (get(state))#state.optional_record_fields]
             })
     end.
 
