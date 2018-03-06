@@ -21,7 +21,7 @@ can_get_struct_test() ->
     ?assertEqual(atom, priv_basic:a(Basic)).
 
 can_get_badarg_on_required_field_missing_test() ->
-    ?assertError(badarg, priv_validated:new(#{})).
+    ?assertError(badarg, priv_basic:new(#{})).
 
 can_get_optional_field_overriden_test() ->
     Basic = priv_basic:new(#{a => atom, b => 123}),
