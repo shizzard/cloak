@@ -450,7 +450,7 @@ optional_new_clause_body_iterate_case_clause_body_binkeytrue__() ->
         ]
     ),
     [?es:application(
-        ?es:atom(required_new),
+        ?es:atom(optional_new),
         [var__(map, 0), SetterApplication, var__(keys, 0)]
     )].
 
