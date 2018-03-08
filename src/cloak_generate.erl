@@ -2,7 +2,6 @@
 -export([generate/1]).
 -include("cloak.hrl").
 
-
 generate(_Forms) ->
     MaybeErrorForms = maybe_errors__(),
     NewForms = new__(),
@@ -31,8 +30,7 @@ generate(_Forms) ->
         SettersForms,
         MaybeDefaultValidateStructCallback,
         MaybeDefaultValidateCallback,
-        MaybeDefaultUpdatedCallback,
-        eof__()
+        MaybeDefaultUpdatedCallback
     ].
 
 
@@ -671,12 +669,23 @@ exports__() ->
 
 %% Generics
 
-
-error_message__(Format, Args) ->
-    ?es:application(
-        ?es:module_qualifier(?es:atom(error_logger), ?es:atom(error_msg)),
-        [?es:string(Format), ?es:list(Args)]
-    ).
+-ifndef(cloak_suppress_logging).
+    error_message__(Format, Args) ->
+        ?es:application(
+            ?es:module_qualifier(?es:atom(error_logger), ?es:atom(error_msg)),
+            [?es:string(Format), ?es:list(Args)]
+        ).
+-else.
+    error_message__(Format, Args) when ?cloak_suppress_logging ->
+        ?es:match_expr(
+            ?es:underscore(),
+            ?es:tuple([
+                ?es:atom(suppressed_logging),
+                ?es:string(Format),
+                ?es:list(Args)
+            ])
+        ).
+-endif.
 
 
 error_badarg__() ->
@@ -686,7 +695,3 @@ error_badarg__() ->
 var__(Name, Num) ->
     VarName = lists:flatten(io_lib:format("~s_~s_~B", ["Var", Name, Num])),
     ?es:variable(VarName).
-
-
-eof__() ->
-    ?es:eof_marker().

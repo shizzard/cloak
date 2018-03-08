@@ -18,5 +18,5 @@ dialyze:
 	$(REBAR) dialyzer
 
 test:
-	ERL_COMPILER_OPTIONS='[{d, cloak_dump, "temp"}]' \
+	ERL_COMPILER_OPTIONS='[{d, cloak_dump, "temp"}, {d, cloak_suppress_logging, true}]' \
 	$(REBAR) eunit
