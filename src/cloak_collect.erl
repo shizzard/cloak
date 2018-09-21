@@ -18,21 +18,7 @@
 
 
 collect(Forms0) ->
-    [?es:revert(traverse(fun callback/2, Form)) || Form <- Forms0].
-
-
-
-traverse(Fun, Tree0) ->
-    Tree1 = case ?es:subtrees(Tree0) of
-        [] ->
-            Tree0;
-        List ->
-            ?es:update_tree(
-                Tree0,
-                [[traverse(Fun, Subtree) || Subtree <- Group] || Group <- List]
-            )
-    end,
-    Fun(?es:type(Tree1), Tree1).
+    [?es:revert(cloak_traverse:traverse(fun callback/2, Form)) || Form <- Forms0].
 
 
 
