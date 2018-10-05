@@ -19,14 +19,24 @@ generate(_Forms) ->
 
 
 setter__(#record_field{name = Name}) ->
-    put(state, (get(state))#state{export = [{Name, 2} | (get(state))#state.export]}),
+    put(state, (get(state))#state{export = [
+        {Name, ?cloak_generated_function_setter_arity} | (get(state))#state.export
+    ]}),
     ?es:function(?es:atom(Name), setter_clauses__(Name)).
 
 
 setter_clauses__(Name) ->
     [
-        ?es:clause(setter_clause_patterns_match__(Name), _Guards = none, setter_clause_body_match__(Name)),
-        ?es:clause(setter_clause_patterns_mismatch__(Name), _Guards = none, setter_clause_body_mismatch__(Name))
+        ?es:clause(
+            setter_clause_patterns_match__(Name),
+            _Guards = none,
+            setter_clause_body_match__(Name)
+        ),
+        ?es:clause(
+            setter_clause_patterns_mismatch__(Name),
+            _Guards = none,
+            setter_clause_body_mismatch__(Name)
+        )
     ].
 
 
@@ -53,9 +63,10 @@ setter_clause_body_mismatch__(_Name) ->
 
 
 setter_clause_body_match_case_argument__(Name) ->
-    ?es:application(?es:atom(?cloak_callback_validate), [
-        ?es:atom(Name), cloak_generate:var__(value, 0)
-    ]).
+    ?es:application(
+        ?es:atom(cloak_generate:validator_function_name(Name)),
+        [cloak_generate:var__(value, 0)]
+    ).
 
 
 setter_clause_body_match_case_clauses__(Name) ->
@@ -78,14 +89,24 @@ setter_clause_body_match_case_clauses_patterns_match_newvalue__(_Name) ->
 
 
 setter_clause_body_match_case_clauses_body_match_newvalue__(Name) ->
-    [?es:application(?es:atom(?cloak_callback_updated), [
-        ?es:atom(Name),
-        ?es:record_expr(
-            cloak_generate:var__(record, 0),
-            ?es:atom((get(state))#state.module),
-            [?es:record_field(?es:atom(Name), cloak_generate:var__(value, 1))]
-        )
-    ])].
+    MaybeUserDefinedSetterCallback = cloak_generate:generic_user_definable_setter_callback_name(Name),
+    case lists:member(
+        MaybeUserDefinedSetterCallback,
+        (get(state))#state.user_defined_setter_callbacks
+    ) of
+        true ->
+            [?es:application(
+                ?es:atom(MaybeUserDefinedSetterCallback),
+                [cloak_generate:var__(record, 0), cloak_generate:var__(value, 1)]
+            )];
+        false ->
+            [?es:record_expr(
+                cloak_generate:var__(record, 0),
+                ?es:atom((get(state))#state.module),
+                [?es:record_field(?es:atom(Name), cloak_generate:var__(value, 1))]
+            )]
+    end.
+
 
 
 setter_clause_body_match_case_clauses_patterns_mismatch__(_Name) ->

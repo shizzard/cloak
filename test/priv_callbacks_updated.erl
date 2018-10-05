@@ -1,4 +1,4 @@
--module(priv_callbackd).
+-module(priv_callbacks_updated).
 -compile({parse_transform, cloak_transform}).
 
 -record(?MODULE, {
@@ -8,11 +8,11 @@
     priv_c = 0
 }).
 
-cloak_updated(a, Record) ->
+updated(a, Record) ->
     Record#?MODULE{prot_op_count = Record#?MODULE.prot_op_count + 1};
 
-cloak_updated(b, Record) ->
+updated(b, Record) ->
     Record#?MODULE{prot_op_count = Record#?MODULE.prot_op_count + 1};
 
-cloak_updated(_, Record) ->
+updated(_, Record) ->
     Record.

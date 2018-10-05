@@ -4,6 +4,5 @@
 -record(?MODULE, {
     a,
     b = atom,
-    prot_c,
-    priv_d
+    prot_c
 }).

@@ -20,25 +20,59 @@ generate(_Forms) ->
 
 
 getter__(#record_field{name = Name}) ->
-    put(state, (get(state))#state{export = [{Name, 1} | (get(state))#state.export]}),
+    put(state, (get(state))#state{export = [
+        {Name, ?cloak_generated_function_getter_arity} | (get(state))#state.export
+    ]}),
     ?es:function(?es:atom(Name), getter_clauses__(Name)).
 
 
 getter_clauses__(Name) ->
+    MaybeUserDefinedGetterCallback = cloak_generate:generic_user_definable_getter_callback_name(Name),
     [
-        ?es:clause(getter_clause_patterns_match__(Name), _Guards = none, getter_clause_body_match__(Name)),
-        ?es:clause(getter_clause_patterns_mismatch__(Name), _Guards = none, getter_clause_body_mismatch__(Name))
+        case lists:member(
+            MaybeUserDefinedGetterCallback,
+            (get(state))#state.user_defined_getter_callbacks
+        ) of
+            true ->
+                ?es:clause(
+                    getter_clause_patterns_match_with_callback__(MaybeUserDefinedGetterCallback),
+                    _Guards = none,
+                    getter_clause_body_match_with_callback__(MaybeUserDefinedGetterCallback)
+                );
+            false ->
+                ?es:clause(
+                    getter_clause_patterns_match_no_callback__(Name),
+                    _Guards = none,
+                    getter_clause_body_match_no_callback__(Name)
+                )
+        end,
+        ?es:clause(
+            getter_clause_patterns_mismatch__(Name),
+            _Guards = none,
+            getter_clause_body_mismatch__(Name)
+        )
     ].
 
 
-getter_clause_patterns_match__(Name) ->
+getter_clause_patterns_match_with_callback__(_MaybeUserDefinedGetterCallback) ->
+    [?es:match_expr(
+        ?es:record_expr(?es:atom((get(state))#state.module), []),
+        cloak_generate:var__(record, 0)
+    )].
+
+
+getter_clause_body_match_with_callback__(MaybeUserDefinedGetterCallback) ->
+    [?es:application(?es:atom(MaybeUserDefinedGetterCallback), [cloak_generate:var__(record, 0)])].
+
+
+getter_clause_patterns_match_no_callback__(Name) ->
     [?es:record_expr(
         ?es:atom((get(state))#state.module),
         [?es:record_field(?es:atom(Name), cloak_generate:var__(Name, 0))]
     )].
 
 
-getter_clause_body_match__(Name) ->
+getter_clause_body_match_no_callback__(Name) ->
     [cloak_generate:var__(Name, 0)].
 
 

@@ -15,7 +15,9 @@ generate(_Forms) ->
 
 
 update__() ->
-    put(state, (get(state))#state{export = [{update, 2} | (get(state))#state.export]}),
+    put(state, (get(state))#state{export = [
+        {?cloak_generated_function_update, ?cloak_generated_function_update_arity} | (get(state))#state.export
+    ]}),
     [
         ?es:function(?es:atom(update), update_clauses__())
     ].

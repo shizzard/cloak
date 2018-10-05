@@ -17,26 +17,26 @@ cannot_get_private_accessors_defined_test() ->
     end, [{priv_d, 1}, {priv_d, 2}, {prot_c, 2}])).
 
 can_get_struct_test() ->
-    Basic = priv_basic:new(#{a => atom}),
-    ?assertEqual(atom, priv_basic:a(Basic)).
+    Struct = priv_basic:new(#{a => atom}),
+    ?assertEqual(atom, priv_basic:a(Struct)).
 
 can_get_badarg_on_required_field_missing_test() ->
     ?assertError(badarg, priv_basic:new(#{})).
 
 can_get_optional_field_overriden_test() ->
-    Basic = priv_basic:new(#{a => atom, b => 123}),
-    ?assertEqual(atom, priv_basic:a(Basic)),
-    ?assertEqual(123, priv_basic:b(Basic)).
+    Struct = priv_basic:new(#{a => atom, b => 123}),
+    ?assertEqual(atom, priv_basic:a(Struct)),
+    ?assertEqual(123, priv_basic:b(Struct)).
 
 can_set_value_test() ->
-    Basic = priv_basic:new(#{a => atom, b => 123}),
-    Basic1 = priv_basic:a(Basic, another),
-    Basic2 = priv_basic:b(Basic1, 321),
-    ?assertEqual(another, priv_basic:a(Basic2)),
-    ?assertEqual(321, priv_basic:b(Basic2)).
+    Struct = priv_basic:new(#{a => atom, b => 123}),
+    Struct1 = priv_basic:a(Struct, another),
+    Struct2 = priv_basic:b(Struct1, 321),
+    ?assertEqual(another, priv_basic:a(Struct2)),
+    ?assertEqual(321, priv_basic:b(Struct2)).
 
 can_update_multiple_fields_test() ->
-    Basic = priv_basic:new(#{a => atom, b => 123}),
-    Basic1 = priv_basic:update(Basic, #{a => another, b => 321}),
-    ?assertEqual(another, priv_basic:a(Basic1)),
-    ?assertEqual(321, priv_basic:b(Basic1)).
+    Struct = priv_basic:new(#{a => atom, b => 123}),
+    Struct1 = priv_basic:update(Struct, #{a => another, b => 321}),
+    ?assertEqual(another, priv_basic:a(Struct1)),
+    ?assertEqual(321, priv_basic:b(Struct1)).

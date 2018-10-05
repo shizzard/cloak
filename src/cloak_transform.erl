@@ -24,7 +24,7 @@ parse_transform(Forms, _Options) ->
     GeneratedForms_getters = cloak_generate_getters:generate(Forms),
     GeneratedForms_setters = cloak_generate_setters:generate(Forms),
     GeneratedForms_validate_struct = cloak_generate_validate_struct:generate(Forms),
-    GeneratedForms_validate = cloak_generate_validate:generate(Forms),
+    GeneratedForms_validators = cloak_generate_validators:generate(Forms),
     GeneratedForms_updated = cloak_generate_updated:generate(Forms),
     GeneratedForms_errors = cloak_generate_errors:generate(Forms),
     GeneratedForms_exports = cloak_generate_exports:generate(Forms),
@@ -36,7 +36,7 @@ parse_transform(Forms, _Options) ->
         GeneratedForms_getters,
         GeneratedForms_setters,
         GeneratedForms_validate_struct,
-        GeneratedForms_validate,
+        GeneratedForms_validators,
         GeneratedForms_updated
     ])),
     maybe_dump_source(MergedForms),
