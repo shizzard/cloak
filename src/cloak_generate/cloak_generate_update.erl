@@ -19,7 +19,7 @@ update__() ->
         {?cloak_generated_function_update, ?cloak_generated_function_update_arity} | (get(state))#state.export
     ]}),
     [
-        ?es:function(?es:atom(update), update_clauses__())
+        ?es:function(?es:atom(?cloak_generated_function_update), update_clauses__())
     ].
 
 

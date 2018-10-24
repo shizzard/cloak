@@ -40,3 +40,8 @@ can_update_multiple_fields_test() ->
     Struct1 = priv_basic:update(Struct, #{a => another, b => 321}),
     ?assertEqual(another, priv_basic:a(Struct1)),
     ?assertEqual(321, priv_basic:b(Struct1)).
+
+can_update_export_test() ->
+    Struct = priv_basic:new(#{a => atom, b => 123}),
+    Struct1 = priv_basic:update(Struct, #{a => another, b => 321}),
+    ?assertEqual(#{a => another, b => 321}, priv_basic:export(Struct1)).

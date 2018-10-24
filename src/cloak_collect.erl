@@ -112,6 +112,10 @@ collect_record_field(FieldStringName, FieldName, FieldValue) ->
                 user_definable_validator_callbacks = [
                     cloak_generate:generic_user_definable_validator_callback_name(FieldName)
                     | (get(state))#state.user_definable_validator_callbacks
+                ],
+                user_definable_export_callbacks = [
+                    cloak_generate:generic_user_definable_export_callback_name(FieldName)
+                    | (get(state))#state.user_definable_export_callbacks
                 ]
             });
         {_, _, _} ->
@@ -132,6 +136,10 @@ collect_record_field(FieldStringName, FieldName, FieldValue) ->
                 user_definable_validator_callbacks = [
                     cloak_generate:generic_user_definable_validator_callback_name(FieldName)
                     | (get(state))#state.user_definable_validator_callbacks
+                ],
+                user_definable_export_callbacks = [
+                    cloak_generate:generic_user_definable_export_callback_name(FieldName)
+                    | (get(state))#state.user_definable_export_callbacks
                 ]
             })
     end.
@@ -143,21 +151,26 @@ maybe_detect_user_definable_callback(Form) ->
     case {
         lists:member(FunctionName, (get(state))#state.user_definable_getter_callbacks),
         lists:member(FunctionName, (get(state))#state.user_definable_setter_callbacks),
-        lists:member(FunctionName, (get(state))#state.user_definable_validator_callbacks)
+        lists:member(FunctionName, (get(state))#state.user_definable_validator_callbacks),
+        lists:member(FunctionName, (get(state))#state.user_definable_export_callbacks)
     } of
-        {true, _, _} ->
+        {true, _, _, _} ->
             put(state, (get(state))#state{
                 user_defined_getter_callbacks = [FunctionName | (get(state))#state.user_defined_getter_callbacks]
             });
-        {_, true, _} ->
+        {_, true, _, _} ->
             put(state, (get(state))#state{
                 user_defined_setter_callbacks = [FunctionName | (get(state))#state.user_defined_setter_callbacks]
             });
-        {_, _, true} ->
+        {_, _, true, _} ->
             put(state, (get(state))#state{
                 user_defined_validator_callbacks = [FunctionName | (get(state))#state.user_defined_validator_callbacks]
             });
-        {_, _, _} ->
+        {_, _, _, true} ->
+            put(state, (get(state))#state{
+                user_defined_export_callbacks = [FunctionName | (get(state))#state.user_defined_export_callbacks]
+            });
+        {_, _, _, _} ->
             ok
     end.
 

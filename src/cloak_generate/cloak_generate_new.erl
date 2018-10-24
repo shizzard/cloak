@@ -19,7 +19,7 @@ new__() ->
         {?cloak_generated_function_new, ?cloak_generated_function_new_arity} | (get(state))#state.export
     ]}),
     [
-        ?es:function(?es:atom(new), new_clauses__()),
+        ?es:function(?es:atom(?cloak_generated_function_new), new_clauses__()),
         ?es:function(?es:atom(required_new), required_new_clauses__()),
         ?es:function(?es:atom(optional_new), optional_new_clauses__())
     ].
