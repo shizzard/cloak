@@ -4,6 +4,8 @@
 -define(cloak_generated_function_new_arity, 1).
 -define(cloak_generated_function_update, update).
 -define(cloak_generated_function_update_arity, 2).
+-define(cloak_generated_function_export, export).
+-define(cloak_generated_function_export_arity, 1).
 
 -define(cloak_generated_function_getter_arity, 1).
 -define(cloak_generated_function_setter_arity, 2).
@@ -29,9 +31,11 @@
     user_definable_getter_callbacks = [] :: [atom()],
     user_definable_setter_callbacks = [] :: [atom()],
     user_definable_validator_callbacks = [] :: [atom()],
+    user_definable_export_callbacks = [] :: [atom()],
     user_defined_getter_callbacks = [] :: [atom()],
     user_defined_setter_callbacks = [] :: [atom()],
     user_defined_validator_callbacks = [] :: [atom()],
+    user_defined_export_callbacks = [] :: [atom()],
     export = [] :: list()
 }).
 

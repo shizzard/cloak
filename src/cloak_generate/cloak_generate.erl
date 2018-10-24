@@ -3,7 +3,8 @@
     validator_function_name/1,
     generic_user_definable_getter_callback_name/1,
     generic_user_definable_setter_callback_name/1,
-    generic_user_definable_validator_callback_name/1
+    generic_user_definable_validator_callback_name/1,
+    generic_user_definable_export_callback_name/1
 ]).
 -export([error_message__/2, error_badarg__/0, var__/2]).
 -include("cloak.hrl").
@@ -28,6 +29,10 @@ generic_user_definable_setter_callback_name(FieldName) ->
 
 generic_user_definable_validator_callback_name(FieldName) ->
     list_to_atom(lists:flatten(io_lib:format("on_validate_~s", [FieldName]))).
+
+
+generic_user_definable_export_callback_name(FieldName) ->
+    list_to_atom(lists:flatten(io_lib:format("on_export_~s", [FieldName]))).
 
 
 %% Generics (AST generators)
