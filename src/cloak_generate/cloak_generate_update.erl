@@ -46,7 +46,7 @@ update_clause_body_match__() ->
 
 update_clause_body_match_case_argument__() ->
     ?es:application(?es:atom(?cloak_callback_validate_struct), [
-        ?es:application(?es:atom(optional_new), [
+        ?es:application(?es:atom(?cloak_generated_function_new_optional), [
             cloak_generate:var__(map, 0),
             cloak_generate:var__(record, 0),
             ?es:list([

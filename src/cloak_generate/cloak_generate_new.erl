@@ -20,8 +20,9 @@ new__() ->
     ]}),
     [
         ?es:function(?es:atom(?cloak_generated_function_new), new_clauses__()),
-        ?es:function(?es:atom(required_new), required_new_clauses__()),
-        ?es:function(?es:atom(optional_new), optional_new_clauses__())
+        ?es:function(?es:atom(?cloak_generated_function_new_required), new_required_clauses__()),
+        ?es:function(?es:atom(?cloak_generated_function_new_optional), new_optional_clauses__()),
+        ?es:function(?es:atom(?cloak_generated_function_new_maybe_substructure), new_maybe_substructure_clauses__())
     ].
 
 
@@ -42,9 +43,9 @@ new_clause_body_match__() ->
 
 new_clause_body_match_case_argument__() ->
     ?es:application(?es:atom(?cloak_callback_validate_struct), [
-        ?es:application(?es:atom(optional_new), [
+        ?es:application(?es:atom(?cloak_generated_function_new_optional), [
             cloak_generate:var__(map, 0),
-            ?es:application(?es:atom(required_new), [
+            ?es:application(?es:atom(?cloak_generated_function_new_required), [
                 cloak_generate:var__(map, 0),
                 ?es:record_expr(?es:atom((get(state))#state.module), []),
                 ?es:list([
@@ -108,22 +109,22 @@ new_clause_body_mismatch__() ->
 %% Required new
 
 
-required_new_clauses__() ->
+new_required_clauses__() ->
     [
-        ?es:clause(required_new_clause_patterns_return__(), _Guards = none, required_new_clause_body_return__()),
-        ?es:clause(required_new_clause_patterns_iterate__(), _Guards = none, required_new_clause_body_iterate__())
+        ?es:clause(new_required_clause_patterns_return__(), _Guards = none, new_required_clause_body_return__()),
+        ?es:clause(new_required_clause_patterns_iterate__(), _Guards = none, new_required_clause_body_iterate__())
     ].
 
 
-required_new_clause_patterns_return__() ->
+new_required_clause_patterns_return__() ->
     [?es:underscore(), cloak_generate:var__(record, 0), ?es:list([])].
 
 
-required_new_clause_body_return__() ->
+new_required_clause_body_return__() ->
     [cloak_generate:var__(record, 0)].
 
 
-required_new_clause_patterns_iterate__() ->
+new_required_clause_patterns_iterate__() ->
     [cloak_generate:var__(map, 0), cloak_generate:var__(record, 0), ?es:list(
         [?es:tuple([
             cloak_generate:var__(key, 0), cloak_generate:var__(binkey, 0)
@@ -131,11 +132,11 @@ required_new_clause_patterns_iterate__() ->
     )].
 
 
-required_new_clause_body_iterate__() ->
-    [?es:case_expr(required_new_clause_body_iterate_case_argument__(), required_new_clause_body_iterate_case_clauses__())].
+new_required_clause_body_iterate__() ->
+    [?es:case_expr(new_required_clause_body_iterate_case_argument__(), new_required_clause_body_iterate_case_clauses__())].
 
 
-required_new_clause_body_iterate_case_argument__() ->
+new_required_clause_body_iterate_case_argument__() ->
     ?es:tuple([
         ?es:application(
             ?es:module_qualifier(?es:atom(maps), ?es:atom(is_key)),
@@ -148,75 +149,83 @@ required_new_clause_body_iterate_case_argument__() ->
     ]).
 
 
-required_new_clause_body_iterate_case_clauses__() ->
+new_required_clause_body_iterate_case_clauses__() ->
     [
         ?es:clause(
-            required_new_clause_body_iterate_case_clause_patterns_keytrue__(),
+            new_required_clause_body_iterate_case_clause_patterns_keytrue__(),
             _Guards = none,
-            required_new_clause_body_iterate_case_clause_body_keytrue__()
+            new_required_clause_body_iterate_case_clause_body_keytrue__()
         ),
         ?es:clause(
-            required_new_clause_body_iterate_case_clause_patterns_binkeytrue__(),
+            new_required_clause_body_iterate_case_clause_patterns_binkeytrue__(),
             _Guards = none,
-            required_new_clause_body_iterate_case_clause_body_binkeytrue__()
+            new_required_clause_body_iterate_case_clause_body_binkeytrue__()
         ),
         ?es:clause(
-            required_new_clause_body_iterate_case_clause_patterns_false__(),
+            new_required_clause_body_iterate_case_clause_patterns_false__(),
             _Guards = none,
-            required_new_clause_body_iterate_case_clause_body_false__()
+            new_required_clause_body_iterate_case_clause_body_false__()
         )
     ].
 
 
-required_new_clause_body_iterate_case_clause_patterns_keytrue__() ->
+new_required_clause_body_iterate_case_clause_patterns_keytrue__() ->
     [?es:tuple([?es:atom(true), ?es:underscore()])].
 
 
-required_new_clause_body_iterate_case_clause_body_keytrue__() ->
+new_required_clause_body_iterate_case_clause_body_keytrue__() ->
     MapsGetKeyApplication = ?es:application(
         ?es:module_qualifier(?es:atom(maps), ?es:atom(get)),
         [cloak_generate:var__(key, 0), cloak_generate:var__(map, 0)]
     ),
+    MaybeSubstructureApplication = ?es:application(
+        ?es:atom(?cloak_generated_function_new_maybe_substructure),
+        [cloak_generate:var__(key, 0), MapsGetKeyApplication]
+    ),
     SetterApplication = ?es:application(
         ?es:module_qualifier(?es:atom((get(state))#state.module), cloak_generate:var__(key, 0)),
         [
             cloak_generate:var__(record, 0),
-            MapsGetKeyApplication
+            MaybeSubstructureApplication
         ]
     ),
     [?es:application(
-        ?es:atom(required_new),
+        ?es:atom(?cloak_generated_function_new_required),
         [cloak_generate:var__(map, 0), SetterApplication, cloak_generate:var__(keys, 0)]
     )].
 
 
-required_new_clause_body_iterate_case_clause_patterns_binkeytrue__() ->
+new_required_clause_body_iterate_case_clause_patterns_binkeytrue__() ->
     [?es:tuple([?es:underscore(), ?es:atom(true)])].
 
 
-required_new_clause_body_iterate_case_clause_body_binkeytrue__() ->
+new_required_clause_body_iterate_case_clause_body_binkeytrue__() ->
     MapsGetKeyApplication = ?es:application(
         ?es:module_qualifier(?es:atom(maps), ?es:atom(get)),
         [cloak_generate:var__(binkey, 0), cloak_generate:var__(map, 0)]
     ),
+    MaybeSubstructureApplication = ?es:application(
+        ?es:atom(?cloak_generated_function_new_maybe_substructure),
+        [cloak_generate:var__(key, 0), MapsGetKeyApplication]
+    ),
     SetterApplication = ?es:application(
         ?es:module_qualifier(?es:atom((get(state))#state.module), cloak_generate:var__(key, 0)),
         [
             cloak_generate:var__(record, 0),
-            MapsGetKeyApplication
+            MaybeSubstructureApplication
         ]
     ),
     [?es:application(
-        ?es:atom(required_new),
+        ?es:atom(?cloak_generated_function_new_required),
         [cloak_generate:var__(map, 0), SetterApplication, cloak_generate:var__(keys, 0)]
     )].
 
 
-required_new_clause_body_iterate_case_clause_patterns_false__() ->
+new_required_clause_body_iterate_case_clause_patterns_false__() ->
     [?es:tuple([?es:underscore(), ?es:underscore()])].
 
 
-required_new_clause_body_iterate_case_clause_body_false__() ->
+new_required_clause_body_iterate_case_clause_body_false__() ->
     [
         cloak_generate:error_message__("cloak badarg: required field '~s' is not found", [cloak_generate:var__(key, 0)]),
         cloak_generate:error_badarg__()
@@ -226,22 +235,22 @@ required_new_clause_body_iterate_case_clause_body_false__() ->
 %% Optional new
 
 
-optional_new_clauses__() ->
+new_optional_clauses__() ->
     [
-        ?es:clause(optional_new_clause_patterns_return__(), _Guards = none, optional_new_clause_body_return__()),
-        ?es:clause(optional_new_clause_patterns_iterate__(), _Guards = none, optional_new_clause_body_iterate__())
+        ?es:clause(new_optional_clause_patterns_return__(), _Guards = none, new_optional_clause_body_return__()),
+        ?es:clause(new_optional_clause_patterns_iterate__(), _Guards = none, new_optional_clause_body_iterate__())
     ].
 
 
-optional_new_clause_patterns_return__() ->
+new_optional_clause_patterns_return__() ->
     [?es:underscore(), cloak_generate:var__(record, 0), ?es:list([])].
 
 
-optional_new_clause_body_return__() ->
+new_optional_clause_body_return__() ->
     [cloak_generate:var__(record, 0)].
 
 
-optional_new_clause_patterns_iterate__() ->
+new_optional_clause_patterns_iterate__() ->
     [cloak_generate:var__(map, 0), cloak_generate:var__(record, 0), ?es:list(
         [?es:tuple([
             cloak_generate:var__(key, 0), cloak_generate:var__(binkey, 0)
@@ -249,11 +258,11 @@ optional_new_clause_patterns_iterate__() ->
     )].
 
 
-optional_new_clause_body_iterate__() ->
-    [?es:case_expr(optional_new_clause_body_iterate_case_argument__(), optional_new_clause_body_iterate_case_clauses__())].
+new_optional_clause_body_iterate__() ->
+    [?es:case_expr(new_optional_clause_body_iterate_case_argument__(), new_optional_clause_body_iterate_case_clauses__())].
 
 
-optional_new_clause_body_iterate_case_argument__() ->
+new_optional_clause_body_iterate_case_argument__() ->
     ?es:tuple([
         ?es:application(
             ?es:module_qualifier(?es:atom(maps), ?es:atom(is_key)),
@@ -266,76 +275,158 @@ optional_new_clause_body_iterate_case_argument__() ->
     ]).
 
 
-optional_new_clause_body_iterate_case_clauses__() ->
+new_optional_clause_body_iterate_case_clauses__() ->
     [
         ?es:clause(
-            optional_new_clause_body_iterate_case_clause_patterns_keytrue__(),
+            new_optional_clause_body_iterate_case_clause_patterns_keytrue__(),
             _Guards = none,
-            optional_new_clause_body_iterate_case_clause_body_keytrue__()
+            new_optional_clause_body_iterate_case_clause_body_keytrue__()
         ),
         ?es:clause(
-            optional_new_clause_body_iterate_case_clause_patterns_binkeytrue__(),
+            new_optional_clause_body_iterate_case_clause_patterns_binkeytrue__(),
             _Guards = none,
-            optional_new_clause_body_iterate_case_clause_body_binkeytrue__()
+            new_optional_clause_body_iterate_case_clause_body_binkeytrue__()
         ),
         ?es:clause(
-            optional_new_clause_body_iterate_case_clause_patterns_false__(),
+            new_optional_clause_body_iterate_case_clause_patterns_false__(),
             _Guards = none,
-            optional_new_clause_body_iterate_case_clause_body_false__()
+            new_optional_clause_body_iterate_case_clause_body_false__()
         )
     ].
 
 
-optional_new_clause_body_iterate_case_clause_patterns_keytrue__() ->
+new_optional_clause_body_iterate_case_clause_patterns_keytrue__() ->
     [?es:tuple([?es:atom(true), ?es:underscore()])].
 
 
-optional_new_clause_body_iterate_case_clause_body_keytrue__() ->
+new_optional_clause_body_iterate_case_clause_body_keytrue__() ->
     MapsGetKeyApplication = ?es:application(
         ?es:module_qualifier(?es:atom(maps), ?es:atom(get)),
         [cloak_generate:var__(key, 0), cloak_generate:var__(map, 0)]
     ),
+    MaybeSubstructureApplication = ?es:application(
+        ?es:atom(?cloak_generated_function_new_maybe_substructure),
+        [cloak_generate:var__(key, 0), MapsGetKeyApplication]
+    ),
     SetterApplication = ?es:application(
         ?es:module_qualifier(?es:atom((get(state))#state.module), cloak_generate:var__(key, 0)),
         [
             cloak_generate:var__(record, 0),
-            MapsGetKeyApplication
+            MaybeSubstructureApplication
         ]
     ),
     [?es:application(
-        ?es:atom(optional_new),
+        ?es:atom(?cloak_generated_function_new_optional),
         [cloak_generate:var__(map, 0), SetterApplication, cloak_generate:var__(keys, 0)]
     )].
 
 
-optional_new_clause_body_iterate_case_clause_patterns_binkeytrue__() ->
+new_optional_clause_body_iterate_case_clause_patterns_binkeytrue__() ->
     [?es:tuple([?es:underscore(), ?es:atom(true)])].
 
 
-optional_new_clause_body_iterate_case_clause_body_binkeytrue__() ->
+new_optional_clause_body_iterate_case_clause_body_binkeytrue__() ->
     MapsGetKeyApplication = ?es:application(
         ?es:module_qualifier(?es:atom(maps), ?es:atom(get)),
         [cloak_generate:var__(binkey, 0), cloak_generate:var__(map, 0)]
     ),
+    MaybeSubstructureApplication = ?es:application(
+        ?es:atom(?cloak_generated_function_new_maybe_substructure),
+        [cloak_generate:var__(key, 0), MapsGetKeyApplication]
+    ),
     SetterApplication = ?es:application(
         ?es:module_qualifier(?es:atom((get(state))#state.module), cloak_generate:var__(key, 0)),
         [
             cloak_generate:var__(record, 0),
-            MapsGetKeyApplication
+            MaybeSubstructureApplication
         ]
     ),
     [?es:application(
-        ?es:atom(optional_new),
+        ?es:atom(?cloak_generated_function_new_optional),
         [cloak_generate:var__(map, 0), SetterApplication, cloak_generate:var__(keys, 0)]
     )].
 
 
-optional_new_clause_body_iterate_case_clause_patterns_false__() ->
+new_optional_clause_body_iterate_case_clause_patterns_false__() ->
     [?es:tuple([?es:underscore(), ?es:underscore()])].
 
 
-optional_new_clause_body_iterate_case_clause_body_false__() ->
+new_optional_clause_body_iterate_case_clause_body_false__() ->
     [?es:application(
-        ?es:atom(optional_new),
+        ?es:atom(?cloak_generated_function_new_optional),
         [cloak_generate:var__(map, 0), cloak_generate:var__(record, 0), cloak_generate:var__(keys, 0)]
     )].
+
+
+%% Maybe substructures new
+
+
+new_maybe_substructure_clauses__() ->
+    [
+        ?es:clause(
+            new_maybe_substructure_clause_patterns_substructures__(FieldName),
+            _Guards = none,
+            new_maybe_substructure_clause_body_substructures_application__(SubstructureModule)
+        ) || {FieldName, SubstructureModule} <- (get(state))#state.nested_substructures
+    ] ++ lists:flatten([
+        [
+            ?es:clause(
+                new_maybe_substructure_clause_patterns_substructures_list__(FieldName),
+                [?es:application(?es:atom(is_list), [cloak_generate:var__(value, 0)])],
+                new_maybe_substructure_clause_body_substructures_list_application__(SubstructureModule)
+            ),
+            ?es:clause(
+                new_maybe_substructure_clause_patterns_substructures_list__(FieldName),
+                _Guards = none,
+                new_maybe_substructure_clause_body_substructures_list_badarg__(SubstructureModule)
+            )
+        ] || {FieldName, SubstructureModule} <- (get(state))#state.nested_substructures_list
+    ]) ++ [
+        ?es:clause(
+            new_maybe_substructure_clause_patterns_substructure_return__(),
+            _Guards = none,
+            new_maybe_substructure_clause_body_substructure_return__()
+        )
+    ].
+
+
+new_maybe_substructure_clause_patterns_substructures__(FieldName) ->
+    [?es:atom(FieldName), cloak_generate:var__(value, 0)].
+
+
+new_maybe_substructure_clause_body_substructures_application__(SubstructureModule) ->
+    [?es:application(
+        ?es:atom(SubstructureModule),
+        ?es:atom(?cloak_generated_function_new),
+        [cloak_generate:var__(value, 0)]
+    )].
+
+
+new_maybe_substructure_clause_patterns_substructures_list__(FieldName) ->
+    [?es:atom(FieldName), cloak_generate:var__(value, 0)].
+
+
+new_maybe_substructure_clause_body_substructures_list_application__(SubstructureModule) ->
+    [?es:list_comp(
+        ?es:application(
+            ?es:atom(SubstructureModule),
+            ?es:atom(?cloak_generated_function_new),
+            [cloak_generate:var__(element, 0)]
+        ),
+        [?es:generator(
+            cloak_generate:var__(element, 0),
+            cloak_generate:var__(value, 0)
+        )]
+    )].
+
+
+new_maybe_substructure_clause_body_substructures_list_badarg__(_SubstructureModule) ->
+    [cloak_generate:error_badarg__()].
+
+
+new_maybe_substructure_clause_patterns_substructure_return__() ->
+    [?es:underscore(), cloak_generate:var__(value, 0)].
+
+
+new_maybe_substructure_clause_body_substructure_return__() ->
+    [cloak_generate:var__(value, 0)].
