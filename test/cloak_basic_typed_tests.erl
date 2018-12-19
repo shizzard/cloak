@@ -30,7 +30,7 @@ can_get_optional_field_overriden_test() ->
 
 can_set_value_test() ->
     Struct = priv_basic_typed:new(#{a => atom, b => 123}),
-    Struct1 = priv_basic_typed:a(Struct, another),
-    Struct2 = priv_basic_typed:b(Struct1, 321),
+    Struct1 = priv_basic_typed:a(another, Struct),
+    Struct2 = priv_basic_typed:b(321, Struct1),
     ?assertEqual(another, priv_basic_typed:a(Struct2)),
     ?assertEqual(321, priv_basic_typed:b(Struct2)).

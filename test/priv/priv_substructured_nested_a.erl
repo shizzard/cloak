@@ -1,6 +1,6 @@
--module(priv_callbacks_substructures_nested_b).
+-module(priv_substructured_nested_a).
 -compile({parse_transform, cloak_transform}).
 
 -record(?MODULE, {
-    d
+    c
 }).

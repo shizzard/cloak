@@ -19,6 +19,6 @@ exports__() ->
         ?es:atom(export), [
             ?es:list(lists:map(fun({Function, Arity}) ->
                 ?es:arity_qualifier(?es:atom(Function), ?es:integer(Arity))
-            end, (get(state))#state.export))
+            end, ?get_state()#state.export))
         ]
     )].

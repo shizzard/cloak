@@ -30,18 +30,18 @@ can_get_optional_field_overriden_test() ->
 
 can_set_value_test() ->
     Struct = priv_basic:new(#{a => atom, b => 123}),
-    Struct1 = priv_basic:a(Struct, another),
-    Struct2 = priv_basic:b(Struct1, 321),
+    Struct1 = priv_basic:a(another, Struct),
+    Struct2 = priv_basic:b(321, Struct1),
     ?assertEqual(another, priv_basic:a(Struct2)),
     ?assertEqual(321, priv_basic:b(Struct2)).
 
 can_update_multiple_fields_test() ->
     Struct = priv_basic:new(#{a => atom, b => 123}),
-    Struct1 = priv_basic:update(Struct, #{a => another, b => 321}),
+    Struct1 = priv_basic:update(#{a => another, b => 321}, Struct),
     ?assertEqual(another, priv_basic:a(Struct1)),
     ?assertEqual(321, priv_basic:b(Struct1)).
 
 can_update_export_test() ->
     Struct = priv_basic:new(#{a => atom, b => 123}),
-    Struct1 = priv_basic:update(Struct, #{a => another, b => 321}),
+    Struct1 = priv_basic:update(#{a => another, b => 321}, Struct),
     ?assertEqual(#{a => another, b => 321}, priv_basic:export(Struct1)).

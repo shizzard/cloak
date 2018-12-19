@@ -13,3 +13,4 @@ erl_crash.dump
 _build
 .idea
 rebar3.crashdump
+src/.DS_Store

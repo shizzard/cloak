@@ -1,10 +1,5 @@
 -module(cloak_generate).
 -export([
-    validator_function_name/1,
-    generic_user_definable_getter_callback_name/1,
-    generic_user_definable_setter_callback_name/1,
-    generic_user_definable_validator_callback_name/1,
-    generic_user_definable_export_callback_name/1,
     set_nested_substructure_module/2,
     get_nested_substructure_module/1,
     set_nested_substructure_list_module/2,
@@ -22,37 +17,17 @@
 %% Generics
 
 
-validator_function_name(FieldName) ->
-    list_to_atom(lists:flatten(io_lib:format("validate_~s", [FieldName]))).
-
-
-generic_user_definable_getter_callback_name(FieldName) ->
-    list_to_atom(lists:flatten(io_lib:format("on_get_~s", [FieldName]))).
-
-
-generic_user_definable_setter_callback_name(FieldName) ->
-    list_to_atom(lists:flatten(io_lib:format("on_set_~s", [FieldName]))).
-
-
-generic_user_definable_validator_callback_name(FieldName) ->
-    list_to_atom(lists:flatten(io_lib:format("on_validate_~s", [FieldName]))).
-
-
-generic_user_definable_export_callback_name(FieldName) ->
-    list_to_atom(lists:flatten(io_lib:format("on_export_~s", [FieldName]))).
-
-
 set_nested_substructure_module(FieldName, SubstructureModule) ->
-    put(state, (get(state))#state{
+    ?put_state(?get_state()#state{
         nested_substructures = [
             {FieldName, SubstructureModule}
-            | (get(state))#state.nested_substructures
+            | ?get_state()#state.nested_substructures
         ]
     }).
 
 
 get_nested_substructure_module(FieldName) ->
-    case proplists:lookup(FieldName, (get(state))#state.nested_substructures) of
+    case proplists:lookup(FieldName, ?get_state()#state.nested_substructures) of
         {FieldName, SubstructureModule} ->
             SubstructureModule;
         none ->
@@ -61,16 +36,16 @@ get_nested_substructure_module(FieldName) ->
 
 
 set_nested_substructure_list_module(FieldName, SubstructureModule) ->
-    put(state, (get(state))#state{
+    ?put_state(?get_state()#state{
         nested_substructures_list = [
             {FieldName, SubstructureModule}
-            | (get(state))#state.nested_substructures_list
+            | ?get_state()#state.nested_substructures_list
         ]
     }).
 
 
 get_nested_substructure_list_module(FieldName) ->
-    case proplists:lookup(FieldName, (get(state))#state.nested_substructures_list) of
+    case proplists:lookup(FieldName, ?get_state()#state.nested_substructures_list) of
         {FieldName, SubstructureModule} ->
             SubstructureModule;
         none ->

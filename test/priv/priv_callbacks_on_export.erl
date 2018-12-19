@@ -1,4 +1,4 @@
--module(priv_callbacks_exporters).
+-module(priv_callbacks_on_export).
 -compile({parse_transform, cloak_transform}).
 
 -record(?MODULE, {
