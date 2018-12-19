@@ -23,13 +23,20 @@ collect(Forms0) ->
 
 
 callback(attribute, Form) ->
-    case ?es:atom_value(?es:attribute_name(Form)) of
-        module ->
+    case {?es:atom_value(?es:attribute_name(Form)), ?es:attribute_arguments(Form)} of
+        {module, Args} ->
             put(state, (get(state))#state{
-                module = ?es:atom_value(hd(?es:attribute_arguments(Form)))
+                module = ?es:atom_value(hd(Args))
             });
-        record ->
-            (?es:atom_value(hd(?es:attribute_arguments(Form))) == (get(state))#state.module)
+        {?cloak_attribute_nested, [Tuple]} ->
+            [Field, SubstructureModule] = ?es:tuple_elements(Tuple),
+            cloak_generate:set_nested_substructure_module(?es:atom_value(Field), ?es:atom_value(SubstructureModule));
+        {?cloak_attribute_nested_list, [Tuple]} ->
+            [Field, SubstructureModule] = ?es:tuple_elements(Tuple),
+            cloak_generate:set_nested_substructure_list_module(?es:atom_value(Field), ?es:atom_value(SubstructureModule));
+        {record, Args} ->
+            (?es:atom_value(hd(Args)) == (get(state))#state.module)
+                andalso begin put(state, (get(state))#state{record_definition_exists = true}), true end
                 andalso [
                     collect_record_field(?es:type(FieldForm), FieldForm)
                     || FieldForm <- ?es:tuple_elements(hd(tl(?es:attribute_arguments(Form))))

@@ -1,5 +1,5 @@
 -module(cloak_transform).
--export([parse_transform/2]).
+-export([parse_transform/2, format_error/1]).
 -include("cloak.hrl").
 
 
@@ -9,7 +9,10 @@
         Forms1 = [?es:revert(T) || T <- lists:flatten(Forms0)],
         Forms2 = epp:restore_typed_record_fields(Forms1),
         Source = iolist_to_binary([erl_pp:form(Form) || Form <- Forms2]),
-        io:format("Dumping '~s' source to ~s: ~p~n", [(get(state))#state.module, DestFile, file:write_file(DestFile, Source)]).
+        io:format(
+            "Dumping '~s' source to ~s: ~p~n",
+            [(get(state))#state.module, DestFile, file:write_file(DestFile, Source)]
+        ).
 -else.
     maybe_dump_source(_Forms0) ->
         ok.
@@ -23,7 +26,7 @@ parse_transform(Forms, _Options) ->
     GeneratedForms_update = cloak_generate_update:generate(Forms),
     GeneratedForms_getters = cloak_generate_getters:generate(Forms),
     GeneratedForms_setters = cloak_generate_setters:generate(Forms),
-    GeneratedForms_export = cloak_generate_export:generate(Forms),
+    GeneratedForms_export = cloak_generate_exporters:generate(Forms),
     GeneratedForms_validate_struct = cloak_generate_validate_struct:generate(Forms),
     GeneratedForms_validators = cloak_generate_validators:generate(Forms),
     GeneratedForms_errors = cloak_generate_errors:generate(Forms),
@@ -41,6 +44,16 @@ parse_transform(Forms, _Options) ->
     ])),
     maybe_dump_source(MergedForms),
     MergedForms.
+
+
+format_error(?cloak_ct_error_no_record_definition) ->
+    io_lib:format("~ts: ~ts", [?MODULE, "no record definition found"]);
+
+format_error(?cloak_ct_error_no_basic_fields) ->
+    io_lib:format("~ts: ~ts", [?MODULE, "no required or optional fields found in record definition"]);
+
+format_error(_ErrorDescriptor) ->
+    io_lib:format("~ts: ~ts: ~p", [?MODULE, "unknown error", _ErrorDescriptor]).
 
 
 do_merge_forms(OriginalForms, GeneratedForms) ->

@@ -11,19 +11,31 @@
 
 
 generate(_Forms) ->
-    [maybe_errors__()].
+    [
+        maybe_no_record_definition_error__(),
+        maybe_no_basic_fields_error__()
+    ].
 
 
 %% Maybe errors
 
 
-maybe_errors__() ->
+maybe_no_record_definition_error__() ->
+    case (get(state))#state.record_definition_exists of
+        false ->
+            [cloak_generate:error_compile_time__(?cloak_ct_error_no_record_definition)];
+        true ->
+            []
+    end.
+
+
+maybe_no_basic_fields_error__() ->
     case {
         (get(state))#state.required_record_fields,
         (get(state))#state.optional_record_fields
     } of
         {[], []} ->
-            []; % TODO: error marker here
+            [cloak_generate:error_compile_time__(?cloak_ct_error_no_basic_fields)];
         {_, _} ->
             []
     end.
