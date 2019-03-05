@@ -12,8 +12,6 @@ generate(_Forms) ->
         i_import__(
             ?get_state()#state.required_record_fields
             ++ ?get_state()#state.optional_record_fields
-                ++ ?get_state()#state.protected_record_fields
-                ++ ?get_state()#state.private_record_fields
         )
     ].
 
@@ -37,11 +35,20 @@ i_import_clauses__([], Acc) ->
     ) | Acc]);
 
 i_import_clauses__([#record_field{name = Name} | RecordFields], Acc) ->
-    i_import_clauses__(RecordFields, [?es:clause(
-        i_import_clause_patterns_match__(Name),
-        _Guards = none,
-        i_import_clause_body_match__(Name)
-    ) | Acc]).
+    MaybeUserDefinedImportCallback = ?user_definable_import_callback_name(Name),
+    case lists:member(
+        MaybeUserDefinedImportCallback,
+        ?get_state()#state.user_defined_import_callbacks
+    ) of
+        true ->
+            i_import_clauses__(RecordFields, [?es:clause(
+                i_import_clause_patterns_match__(Name),
+                _Guards = none,
+                i_import_clause_body_match__(Name)
+            ) | Acc]);
+        false ->
+            i_import_clauses__(RecordFields, Acc)
+    end.
 
 
 i_import_clause_patterns_match__(Name) ->
@@ -53,21 +60,12 @@ i_import_clause_patterns_match__(Name) ->
 
 i_import_clause_body_match__(Name) ->
     MaybeUserDefinedImportCallback = ?user_definable_import_callback_name(Name),
-    case lists:member(
-        MaybeUserDefinedImportCallback,
-        ?get_state()#state.user_defined_import_callbacks
-    ) of
-        true ->
-            [?es:application(?es:atom(MaybeUserDefinedImportCallback), [cloak_generate:var__(value, 0)])];
-        false ->
-            [cloak_generate:var__(value, 0)]
-    end.
-
+    [?es:application(?es:atom(MaybeUserDefinedImportCallback), [cloak_generate:var__(value, 0)])].
 
 
 i_import_clause_patterns_mismatch__() ->
-    [?es:underscore(), ?es:underscore()].
+    [?es:underscore(), cloak_generate:var__(value, 0)].
 
 
 i_import_clause_body_mismatch__() ->
-    [cloak_generate:error_badarg__()].
+    [cloak_generate:var__(value, 0)].

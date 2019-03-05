@@ -37,11 +37,20 @@ i_validate_clauses__([], Acc) ->
     ) | Acc]);
 
 i_validate_clauses__([#record_field{name = Name} | RecordFields], Acc) ->
-    i_validate_clauses__(RecordFields, [?es:clause(
-        i_validate_clause_patterns_match__(Name),
-        _Guards = none,
-        i_validate_clause_body_match__(Name)
-    ) | Acc]).
+    MaybeUserDefinedValidatorCallback = ?user_definable_validator_callback_name(Name),
+    case lists:member(
+        MaybeUserDefinedValidatorCallback,
+        ?get_state()#state.user_defined_validator_callbacks
+    ) of
+        true ->
+            i_validate_clauses__(RecordFields, [?es:clause(
+                i_validate_clause_patterns_match__(Name),
+                _Guards = none,
+                i_validate_clause_body_match__(Name)
+            ) | Acc]);
+        false ->
+            i_validate_clauses__(RecordFields, Acc)
+    end.
 
 
 i_validate_clause_patterns_match__(Name) ->
@@ -53,21 +62,13 @@ i_validate_clause_patterns_match__(Name) ->
 
 i_validate_clause_body_match__(Name) ->
     MaybeUserDefinedValidatorCallback = ?user_definable_validator_callback_name(Name),
-    case lists:member(
-        MaybeUserDefinedValidatorCallback,
-        ?get_state()#state.user_defined_validator_callbacks
-    ) of
-        true ->
-            [?es:application(?es:atom(MaybeUserDefinedValidatorCallback), [cloak_generate:var__(value, 0)])];
-        false ->
-            [cloak_generate:var__(value, 0)]
-    end.
+    [?es:application(?es:atom(MaybeUserDefinedValidatorCallback), [cloak_generate:var__(value, 0)])].
 
 
 
 i_validate_clause_patterns_mismatch__() ->
-    [?es:underscore(), ?es:underscore()].
+    [?es:underscore(), cloak_generate:var__(value, 0)].
 
 
 i_validate_clause_body_mismatch__() ->
-    [cloak_generate:error_badarg__()].
+    [cloak_generate:var__(value, 0)].
