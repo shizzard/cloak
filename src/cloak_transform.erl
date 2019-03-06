@@ -26,7 +26,7 @@ parse_transform(Forms, _Options) ->
     GeneratedForms_update = cloak_generate_update:generate(Forms),
     GeneratedForms_getters = cloak_generate_getters:generate(Forms),
     GeneratedForms_setters = cloak_generate_setters:generate(Forms),
-    GeneratedForms_export = cloak_generate_exporters:generate(Forms),
+    GeneratedForms_export = cloak_generate_export:generate(Forms),
     GeneratedForms_errors = cloak_generate_errors:generate(Forms),
     GeneratedForms_exports = cloak_generate_exports:generate(Forms),
     GeneratedForms_i_new_required = cloak_generate_i_new_required:generate(Forms),
@@ -36,6 +36,7 @@ parse_transform(Forms, _Options) ->
     GeneratedForms_i_on_import = cloak_generate_i_on_import:generate(Forms),
     GeneratedForms_i_on_update = cloak_generate_i_on_update:generate(Forms),
     GeneratedForms_i_on_validate = cloak_generate_i_on_validate:generate(Forms),
+    GeneratedForms_i_on_export = cloak_generate_i_on_export:generate(Forms),
     MergedForms = do_merge_forms(Forms, lists:flatten([
         % Error markers and `-export` directive
         GeneratedForms_errors,
@@ -54,7 +55,8 @@ parse_transform(Forms, _Options) ->
         % Internal functions - callback'd
         GeneratedForms_i_on_import,
         GeneratedForms_i_on_update,
-        GeneratedForms_i_on_validate
+        GeneratedForms_i_on_validate,
+        GeneratedForms_i_on_export
     ])),
     maybe_dump_source(MergedForms),
     MergedForms.

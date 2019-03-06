@@ -6,5 +6,5 @@
 }).
 
 
-on_export_a(#?MODULE{a = Value}) ->
+on_export_a(Value) ->
     Value * 2.

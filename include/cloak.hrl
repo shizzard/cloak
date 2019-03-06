@@ -21,6 +21,7 @@
 -define(cloak_generated_function_i_on_import, i_on_import).
 -define(cloak_generated_function_i_on_update, i_on_update).
 -define(cloak_generated_function_i_on_validate, i_on_validate).
+-define(cloak_generated_function_i_on_export, i_on_export).
 
 %% Generated functions arities (for exportable ones)
 -define(cloak_generated_function_new_arity, 1).

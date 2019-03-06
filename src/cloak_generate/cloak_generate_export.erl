@@ -1,4 +1,4 @@
--module(cloak_generate_exporters).
+-module(cloak_generate_export).
 -behaviour(cloak_generate).
 -export([generate/1]).
 -include("cloak.hrl").
@@ -61,21 +61,28 @@ export_clause_body_match_map_field__(Name, _, _, true) ->
     %% User-defined callback specified
     ?es:map_field_assoc(
         ?es:atom(Name),
-        ?es:application(
-            ?es:atom(?user_definable_export_callback_name(Name)),
-            [cloak_generate:var__(record, 0)]
-        )
+        ?es:application(?es:atom(?cloak_generated_function_i_on_export), [
+            ?es:atom(Name),
+            ?es:record_access(
+                cloak_generate:var__(record, 0),
+                ?es:atom(?get_state()#state.module),
+                ?es:atom(Name)
+            )
+        ])
     );
 
-export_clause_body_match_map_field__(Name, undefined, undefined, false) ->
+export_clause_body_match_map_field__(Name, undefined, undefined, _) ->
     %% No user-defined callback, no substructures specified
     ?es:map_field_assoc(
         ?es:atom(Name),
-        ?es:record_access(
-            cloak_generate:var__(record, 0),
-            ?es:atom(?get_state()#state.module),
-            ?es:atom(Name)
-        )
+        ?es:application(?es:atom(?cloak_generated_function_i_on_export), [
+            ?es:atom(Name),
+            ?es:record_access(
+                cloak_generate:var__(record, 0),
+                ?es:atom(?get_state()#state.module),
+                ?es:atom(Name)
+            )
+        ])
     );
 
 export_clause_body_match_map_field__(Name, UserDefinedSubstructureModule, undefined, _) ->

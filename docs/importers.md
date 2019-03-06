@@ -23,9 +23,7 @@ on_import_binary(_) ->
     error(badarg).
 ```
 
-If you will then define a [substructure](substructures.md) for this field, a substructure constructor will be automatically called, and only then the value will be [validated](validators.md).
-
-You may refer to the [`priv_callbacks_on_import.erl`](/test/priv/priv_callbacks_on_import.erl) modified source code to understand what happens when you're declaring the importer:
+You may refer to the [`priv_callbacks_on_import.erl`](/test/priv/priv_callbacks_on_import.erl) modified source code to understand what happens when you declare the importer:
 
 ```erlang
 i_on_import(a, Var_value_0) ->
