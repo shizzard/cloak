@@ -7,7 +7,8 @@
 ]).
 -export([
     error_compile_time__/1, error_compile_time__/2,
-    error_message__/2, error_badarg__/0, var__/2
+    error_message__/2, error_badarg__/0, var__/2,
+    function_spec__/3, built_in_type__/1, no_return_type__/0, opaque_type__/0
 ]).
 -include("cloak.hrl").
 
@@ -90,3 +91,31 @@ error_badarg__() ->
 var__(Name, Num) ->
     VarName = lists:flatten(io_lib:format("~s_~s_~B", ["Var", Name, Num])),
     ?es:variable(VarName).
+
+
+%% Typespecs (AST generators)
+
+
+function_spec__(FunctionName, ArgsTypes, RetType) ->
+    ?es:attribute(?es:atom(spec), [
+        ?es:tuple([
+            ?es:tuple([?es:atom(FunctionName), ?es:integer(length(ArgsTypes))]),
+            %% This is a strange approach, but it does work;
+            %% doesn't work without revert/abstract calls though.
+            %% Definitely a place to revisit in future.
+            ?es:abstract([?es:revert(?es:function_type(ArgsTypes, RetType))])
+        ])
+    ]).
+
+
+built_in_type__(Type) ->
+    ?es:type_application(?es:atom(Type), []).
+
+
+no_return_type__() ->
+    built_in_type__(no_return).
+
+
+opaque_type__() ->
+    ?es:type_application(?es:atom(term), []).
+    %?es:type_application(?es:atom(?get_state()#state.module), ?es:atom(t), []).

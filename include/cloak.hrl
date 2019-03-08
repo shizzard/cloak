@@ -31,7 +31,9 @@
 -define(cloak_generated_function_export_arity, 1).
 
 %% User-definable callbacks
--define(user_definable_update_callback, on_update).
+-define(user_definable_on_import_callback, on_import).
+-define(user_definable_on_update_callback, on_update).
+-define(user_definable_on_export_callback, on_export).
 -define(
 user_definable_import_callback_name(FieldName),
     list_to_atom(lists:flatten(io_lib:format("on_import_~s", [FieldName])))
@@ -55,7 +57,8 @@ user_definable_import_callback_name(FieldName),
 %% Internal compile-time records
 -record(record_field, {
     name :: atom(),
-    binary_name :: binary()
+    binary_name :: binary(),
+    type :: term()
 }).
 -record(state, {
     module :: atom(),
@@ -66,15 +69,18 @@ user_definable_import_callback_name(FieldName),
     private_record_fields = [] :: [#record_field{}],
     nested_substructures = [] :: [{atom(), atom()}],
     nested_substructures_list = [] :: [{atom(), atom()}],
-    user_definable_on_update_callback_exists = false :: boolean(),
-    user_definable_validator_callbacks = [] :: [atom()],
-    user_definable_export_callbacks = [] :: [atom()],
-    user_definable_import_callbacks = [] :: [atom()],
-    user_defined_getter_callbacks = [] :: [atom()],
-    user_defined_setter_callbacks = [] :: [atom()],
-    user_defined_import_callbacks = [] :: [atom()],
-    user_defined_validator_callbacks = [] :: [atom()],
-    user_defined_export_callbacks = [] :: [atom()],
+    cloak_i_on_export_function_to_be_generated = false :: boolean(),
+    %% datastructure-level
+    user_defined_on_import_callback_exists = false :: boolean(),
+    user_defined_on_update_callback_exists = false :: boolean(),
+    user_defined_on_export_callback_exists = false :: boolean(),
+    %% field-level
+    user_definable_on_validate_callbacks = [] :: [atom()],
+    user_definable_on_export_callbacks = [] :: [atom()],
+    user_definable_on_import_callbacks = [] :: [atom()],
+    user_defined_on_import_callbacks = [] :: [atom()],
+    user_defined_on_validate_callbacks = [] :: [atom()],
+    user_defined_on_export_callbacks = [] :: [atom()],
     export = [] :: list()
 }).
 

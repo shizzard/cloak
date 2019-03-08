@@ -11,9 +11,6 @@ generate(_Forms) ->
     [i_on_update__()].
 
 
-%% Update
-
-
 i_on_update__() ->
     [?es:function(?es:atom(?cloak_generated_function_i_on_update), i_on_update_clauses__())].
 
@@ -35,10 +32,10 @@ i_on_update_clause_patterns_match__() ->
 
 
 i_on_update_clause_body_match__() ->
-    case ?get_state()#state.user_definable_on_update_callback_exists of
+    case ?get_state()#state.user_defined_on_update_callback_exists of
         true ->
             [?es:application(
-                ?es:atom(?user_definable_update_callback),
+                ?es:atom(?user_definable_on_update_callback),
                 [cloak_generate:var__(record, 0)]
             )];
         false ->

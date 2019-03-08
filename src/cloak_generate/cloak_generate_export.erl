@@ -8,10 +8,27 @@
 
 
 generate(_Forms) ->
-    [export__()].
+    [
+        export_spec__(),
+        export__()
+    ].
 
 
 %% New
+
+
+export_spec__() ->
+    cloak_generate:function_spec__(
+        ?cloak_generated_function_export,
+        _In = [?es:annotated_type(
+            cloak_generate:var__(in_maybe_record, 0),
+            ?es:type_union([cloak_generate:opaque_type__(), cloak_generate:built_in_type__(term)])
+        )],
+        _Out = ?es:annotated_type(
+            cloak_generate:var__(out_map, 0),
+            ?es:type_union([cloak_generate:built_in_type__(map), cloak_generate:no_return_type__()])
+        )
+    ).
 
 
 export__() ->
@@ -42,23 +59,30 @@ export_clause_patterns_match__(_) ->
 
 
 export_clause_body_match__() ->
-    [?es:map_expr([
-        export_clause_body_match_map_field__(
-            RecordField#record_field.name,
-            cloak_generate:get_nested_substructure_module(RecordField#record_field.name),
-            cloak_generate:get_nested_substructure_list_module(RecordField#record_field.name),
-            lists:member(
-                ?user_definable_export_callback_name(RecordField#record_field.name),
-                ?get_state()#state.user_defined_export_callbacks
-            )
-        ) || RecordField
-        <- ?get_state()#state.required_record_fields
-        ++ ?get_state()#state.optional_record_fields
+    [?es:application(?es:atom(?cloak_generated_function_i_on_export), [
+        ?es:map_expr([
+            export_clause_body_match_map_field__(
+                RecordField#record_field.name,
+                cloak_generate:get_nested_substructure_module(RecordField#record_field.name),
+                cloak_generate:get_nested_substructure_list_module(RecordField#record_field.name),
+                lists:member(
+                    ?user_definable_export_callback_name(RecordField#record_field.name),
+                    ?get_state()#state.user_defined_on_export_callbacks
+                )
+            ) || RecordField
+            <- ?get_state()#state.required_record_fields
+            ++ ?get_state()#state.optional_record_fields
+        ])
     ])].
 
 
 export_clause_body_match_map_field__(Name, _, _, true) ->
     %% User-defined callback specified
+    %% Since it is a possible situation when `i_on_export` internal function
+    %% will never be called (all fields are subsctructures, no `on_export`
+    %% user-defined callback specified), we need to set an explicit flag if
+    %% `i_on_export` function should be generated at all.
+    ?put_state(?get_state()#state{cloak_i_on_export_function_to_be_generated = true}),
     ?es:map_field_assoc(
         ?es:atom(Name),
         ?es:application(?es:atom(?cloak_generated_function_i_on_export), [
@@ -73,6 +97,11 @@ export_clause_body_match_map_field__(Name, _, _, true) ->
 
 export_clause_body_match_map_field__(Name, undefined, undefined, _) ->
     %% No user-defined callback, no substructures specified
+    %% Since it is a possible situation when `i_on_export` internal function
+    %% will never be called (all fields are subsctructures, no `on_export`
+    %% user-defined callback specified), we need to set an explicit flag if
+    %% `i_on_export` function should be generated at all.
+    ?put_state(?get_state()#state{cloak_i_on_export_function_to_be_generated = true}),
     ?es:map_field_assoc(
         ?es:atom(Name),
         ?es:application(?es:atom(?cloak_generated_function_i_on_export), [

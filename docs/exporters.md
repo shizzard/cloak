@@ -2,6 +2,8 @@
 
 As opposed of [importers.md](importers.md), exporter functions may be used to pack your data according to your needs.
 
+## Field-level exporters
+
 Exporter function is called right before packing your datastructure back into the `map()`.
 
 You may declare a function `on_export_FIELD_NAME` with the following spec:
@@ -35,3 +37,5 @@ i_on_export(a, Var_value_0) ->
 i_on_export(_, Var_value_0) ->
     Var_value_0.
 ```
+
+## Datastructure-level exporters

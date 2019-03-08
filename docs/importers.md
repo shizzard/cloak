@@ -2,7 +2,11 @@
 
 Defining importer functions is a way to import some fancy packed data into your datastructure.
 
-Techically speaking, it is called only within `new/1` function right before the [substructures](substructures.md) initialization if any.
+Please, refer to [Exporters](exporters.md) documentation to find a way to pack your data back.
+
+## Field-level importers
+
+Techically speaking, field-level importers are called only within `new/1` function right before the [substructures](substructures.md) initialization if any.
 
 You may declare a function called `on_import_FIELD_NAME` with the following spec:
 
@@ -32,4 +36,6 @@ i_on_import(_, Var_value_0) ->
     Var_value_0.
 ```
 
-Please, refer to [Exporters](exporters.md) documentation to find a way to pack your data back into binary.
+## Datastructure-level importers
+
+

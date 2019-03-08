@@ -18,9 +18,6 @@ generate(_Forms) ->
     ].
 
 
-%% Validators (?MODULE:validate/2)
-
-
 i_on_validate__(RecordFields) ->
     ?es:function(?es:atom(?cloak_generated_function_i_on_validate), i_on_validate_clauses__(RecordFields)).
 
@@ -40,7 +37,7 @@ i_on_validate_clauses__([#record_field{name = Name} | RecordFields], Acc) ->
     MaybeUserDefinedValidatorCallback = ?user_definable_validator_callback_name(Name),
     case lists:member(
         MaybeUserDefinedValidatorCallback,
-        ?get_state()#state.user_defined_validator_callbacks
+        ?get_state()#state.user_defined_on_validate_callbacks
     ) of
         true ->
             i_on_validate_clauses__(RecordFields, [?es:clause(

@@ -8,15 +8,34 @@
 
 
 generate(_Forms) ->
-    [
-        getter__(RecordField) || RecordField
+    lists:flatten([
+        [getter_spec__(RecordField), getter__(RecordField)] || RecordField
         <- ?get_state()#state.required_record_fields
         ++ ?get_state()#state.optional_record_fields
         ++ ?get_state()#state.protected_record_fields
-    ].
+    ]).
 
 
 %% Getters
+
+
+getter_spec__(#record_field{name = Name, type = Type}) ->
+    cloak_generate:function_spec__(
+        Name,
+        _In = [
+            ?es:annotated_type(
+                cloak_generate:var__(in_maybe_record, 0),
+                ?es:type_union([cloak_generate:opaque_type__(), cloak_generate:built_in_type__(term)])
+            )
+        ],
+        _Out = ?es:annotated_type(
+            cloak_generate:var__(out_value, 0),
+            case Type of
+                none -> ?es:type_union([cloak_generate:built_in_type__(term), cloak_generate:no_return_type__()]);
+                Type -> ?es:type_union([Type, cloak_generate:no_return_type__()])
+            end
+        )
+    ).
 
 
 getter__(#record_field{name = Name}) ->

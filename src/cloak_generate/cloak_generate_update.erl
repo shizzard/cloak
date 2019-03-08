@@ -8,10 +8,33 @@
 
 
 generate(_Forms) ->
-    [update__()].
+    [
+        update_spec__(),
+        update__()
+    ].
 
 
 %% Update
+
+
+update_spec__() ->
+    cloak_generate:function_spec__(
+        ?cloak_generated_function_update,
+        _In = [
+            ?es:annotated_type(
+                cloak_generate:var__(in_maybe_map, 0),
+                ?es:type_union([cloak_generate:built_in_type__(map), cloak_generate:built_in_type__(term)])
+            ),
+            ?es:annotated_type(
+                cloak_generate:var__(in_maybe_record, 0),
+                ?es:type_union([cloak_generate:opaque_type__(), cloak_generate:built_in_type__(term)])
+            )
+        ],
+        _Out = ?es:annotated_type(
+            cloak_generate:var__(out_record, 0),
+            ?es:type_union([cloak_generate:opaque_type__(), cloak_generate:no_return_type__()])
+        )
+    ).
 
 
 update__() ->
